@@ -1,43 +1,36 @@
-import React, { useState } from 'react'
-import logo from './logo.svg'
+import React from 'react'
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 import './App.css'
+import AddProduct from './view/products/AddProduct'
+import Products from './view/products/Products'
+import EditProduct from './view/products/EditProduct'
+import DeleteProduct from './view/products/DeleteProduct'
+import ViewProduct from './view/products/ViewProduct'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+    <div className="App mx-auto max-w-6xl text-center my-8">
+      <h1 className="font-semibold text-2xl">React - The Road To Enterprise</h1>
+      <div className="mt-8 ">
+        <BrowserRouter>
+          <nav className="space-x-4 mb-6">
+            <Link to="/products">Browse Products</Link>
+            <Link to="/products/add">Add Product</Link>
+            <Link to="/products/1/edit">Edit Product</Link>
+            <Link to="/products/1/delete">Delete Product</Link>
+            <Link to="/products/1">View Product</Link>
+          </nav>
+          <Routes>
+            <Route path="/products">
+              <Route index element={<Products />} />
+              <Route path="add" element={<AddProduct />} />
+              <Route path=":id/edit" element={<EditProduct />} />
+              <Route path=":id/delete" element={<DeleteProduct />} />
+              <Route path=":id" element={<ViewProduct />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </div>
     </div>
   )
 }
