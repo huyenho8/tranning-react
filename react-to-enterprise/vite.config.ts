@@ -9,19 +9,15 @@ import { resolve } from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
     checker({
       overlay: { initialIsOpen: false },
       typescript: true,
-      eslint: {
-        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-      },
     }),
     viteTsconfigPaths(),
     svgrPlugin(),
     handlebars({
       partialDirectory: resolve(__dirname, 'src/partials'),
-    }) as Plugin,
+    }),
   ],
   server: {
     port: 3000,
