@@ -5,7 +5,7 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [reactRefresh()],
-  resolve: {cffß
+  resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
