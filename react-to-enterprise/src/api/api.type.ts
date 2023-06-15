@@ -26,4 +26,6 @@ export type ApiRequestConfig = AxiosRequestConfig & {
   abort?: (cancel: Canceler) => void
 }
 
-export type ApiError = AxiosError
+export type ApiError = AxiosError & {
+  aborted?: boolean
+}
