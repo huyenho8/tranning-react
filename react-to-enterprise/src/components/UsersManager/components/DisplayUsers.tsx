@@ -1,11 +1,13 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { removeUser, selectUser } from '../usersSlice'
+import Spinner from '@/components/Spinner'
 
 type DisplayUsersProps = {}
 const DisplayUsers = (props: DisplayUsersProps) => {
   const dispatch = useAppDispatch()
   const users = useAppSelector((state) => state.users.users)
+  const deletingUserId = useAppSelector((state) => state.users.deletingUserId)
 
   return (
     <div>
@@ -20,7 +22,11 @@ const DisplayUsers = (props: DisplayUsersProps) => {
               >
                 {user.email}
               </button>
-              <button onClick={() => dispatch(removeUser(user))}>X</button>
+              {deletingUserId === user?.id ? (
+                <Spinner show size="sm" />
+              ) : (
+                <button onClick={() => dispatch(removeUser(user))}>X</button>
+              )}
             </li>
           )
         })}

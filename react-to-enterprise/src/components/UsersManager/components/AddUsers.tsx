@@ -1,4 +1,4 @@
-import { useAppDispatch } from '@/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import React, { useState } from 'react'
 import { addUser } from '../usersSlice'
 
@@ -9,6 +9,10 @@ const initialState = { name: '', email: '' }
 
 const AddUsers = (props: AddUsersProps) => {
   const dispatch = useAppDispatch()
+
+  const isAddingUser = useAppSelector(
+    (state) => state.users.addUserStatus === 'PENDING'
+  )
 
   const [form, setForm] = useState(initialState)
 
@@ -65,7 +69,7 @@ const AddUsers = (props: AddUsersProps) => {
           className="w-28 self-end bg-blue-700 text-blue-100 px-4 py-3"
           onClick={onAddUser}
         >
-          Add User
+          {isAddingUser ? 'Adding...' : 'Add User'}
         </button>
       </form>
     </div>
