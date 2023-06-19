@@ -1,18 +1,26 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { listUsers } from '@/api/userApi'
+import { RootState } from '@/store'
+import {
+  createSlice,
+  PayloadAction,
+  createSelector,
+  createAsyncThunk,
+} from '@reduxjs/toolkit'
 import { User } from './UsersManager.type'
 import { initialUsers } from './initialUsers'
-import { RootState } from '@/store'
+type ApiStatus = 'IDLE' | 'PENDING' | 'SUCCESS' | 'ERROR'
 
 export type UsersState = {
   users: User[]
-  selectedUserId?: User['id'] | null
+  selectedUserId: User['id'] | null
+  fetchUsersStatus: ApiStatus
 }
-
 const initialState: UsersState = {
-  users: initialUsers,
-  selectedUserId: undefined,
+  users: [],
+  selectedUserId: null,
+  fetchUsersStatus: 'IDLE',
 }
-
+export const fetchUsers = createAsyncThunk('users/fetchUsers', listUsers)
 export const usersSlice = createSlice({
   name: 'users',
   initialState,
@@ -30,6 +38,19 @@ export const usersSlice = createSlice({
       state.selectedUserId = action.payload
     },
   },
+
+  extraReducers: (builder) => {
+    builder.addCase(fetchUsers.pending, (state, action) => {
+      state.fetchUsersStatus = 'PENDING'
+    })
+    builder.addCase(fetchUsers.fulfilled, (state, action) => {
+      state.fetchUsersStatus = 'SUCCESS'
+      state.users = action.payload
+    })
+    builder.addCase(fetchUsers.rejected, (state, action) => {
+      state.fetchUsersStatus = 'ERROR'
+    })
+  },
 })
 
 export const { setUsers, addUser, removeUser, selectUser } = usersSlice.actions
@@ -43,5 +64,4 @@ export const getSelectedUser = createSelector(
     return null
   }
 )
-
 export default usersSlice.reducer

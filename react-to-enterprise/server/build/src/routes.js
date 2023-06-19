@@ -23,6 +23,9 @@ function routes(fastify, opts, done) {
     fastify.register(Promise.resolve().then(function () { return __importStar(require('./features/quotes/quotesRoutes')); }), {
         prefix: '/quotes',
     });
+    fastify.register(Promise.resolve().then(function () { return __importStar(require('./features/user/userRoutes')); }), {
+        prefix: '/user',
+    });
     done();
 }
 exports.default = routes;
