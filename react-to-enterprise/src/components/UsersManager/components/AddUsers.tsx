@@ -3,23 +3,25 @@ import React, { useState } from 'react'
 import { addUser } from '../usersSlice'
 
 type AddUsersProps = {}
+
 const createId = () => '_' + Math.random().toString(36).substr(2, 9)
 
-const initialState = { name: '', email: '' }
+const initialState = {
+  name: '',
+  email: '',
+}
 
 const AddUsers = (props: AddUsersProps) => {
   const dispatch = useAppDispatch()
-
   const isAddingUser = useAppSelector(
     (state) => state.users.addUserStatus === 'PENDING'
   )
-
   const [form, setForm] = useState(initialState)
 
-  const onAddUser = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onAddUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     if (!form.name || !form.email) return
-    dispatch(
+    await dispatch(
       addUser({
         id: createId(),
         ...form,
@@ -68,6 +70,7 @@ const AddUsers = (props: AddUsersProps) => {
         <button
           className="w-28 self-end bg-blue-700 text-blue-100 px-4 py-3"
           onClick={onAddUser}
+          disabled={isAddingUser}
         >
           {isAddingUser ? 'Adding...' : 'Add User'}
         </button>
@@ -75,4 +78,5 @@ const AddUsers = (props: AddUsersProps) => {
     </div>
   )
 }
+
 export default AddUsers
