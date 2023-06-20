@@ -1,21 +1,21 @@
-import React from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Spinner from '../Spinner'
 import AddUsers from './components/AddUsers'
 import DisplayUsers from './components/DisplayUsers'
 import SelectedUserDetails from './components/SelectedUserDetails'
-import { fetchUsers } from './usersSlice'
+import { fetchUsers, selectTotalUsers } from './usersSlice'
 
 type UsersManagerProps = {}
-
 const UsersManager = (props: UsersManagerProps) => {
   const dispatch = useAppDispatch()
+  const fetchUsersStatus = useAppSelector((state) => {
+    return state.users.fetchUsersStatus
+  })
+  const totalUsers = useAppSelector(selectTotalUsers)
 
-  const fetchUsersStatus = useAppSelector(
-    (state) => state.users.fetchUsersStatus
-  )
   useEffect(() => {
+    if (totalUsers) return
     dispatch(fetchUsers())
   }, [dispatch])
 

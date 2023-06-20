@@ -1,12 +1,13 @@
 import React from 'react'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { removeUser, selectUser } from '../usersSlice'
 import Spinner from '@/components/Spinner'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { removeUser, selectAllUsers, selectUser } from '../usersSlice'
 
 type DisplayUsersProps = {}
+
 const DisplayUsers = (props: DisplayUsersProps) => {
   const dispatch = useAppDispatch()
-  const users = useAppSelector((state) => state.users.users)
+  const users = useAppSelector(selectAllUsers)
   const deletingUserId = useAppSelector((state) => state.users.deletingUserId)
 
   return (
@@ -22,7 +23,7 @@ const DisplayUsers = (props: DisplayUsersProps) => {
               >
                 {user.email}
               </button>
-              {deletingUserId === user?.id ? (
+              {deletingUserId === user.id ? (
                 <Spinner show size="sm" />
               ) : (
                 <button onClick={() => dispatch(removeUser(user))}>X</button>
@@ -34,4 +35,5 @@ const DisplayUsers = (props: DisplayUsersProps) => {
     </div>
   )
 }
+
 export default DisplayUsers
