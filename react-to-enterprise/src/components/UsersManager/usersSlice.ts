@@ -1,7 +1,8 @@
+import { listUsers, createUser, deleteUser } from '@/api/userApi'
 import { RootState } from '@/store'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { User } from './UsersManager.type'
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export type UsersState = {
   selectedUserId: User['id'] | null
@@ -14,42 +15,59 @@ const initialState: UsersState = {
 }
 
 export const usersApiSlice = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl:
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:4000/api/'
-        : '/api/',
-  }),
-
+  baseQuery: fakeBaseQuery(),
   tagTypes: ['Users'],
   endpoints: (builder) => ({
     fetchUsers: builder.query<User[], void>({
-      query: () => `user/all`,
-      transformResponse: (response: { users: User[] }) => {
-        return response.users
+      queryFn: async () => {
+        return {
+          data: await listUsers(),
+        }
       },
       providesTags: ['Users'],
     }),
-
     createUser: builder.mutation<{ user: User }, User>({
-      query: (user) => ({
-        url: `user`,
-        method: 'POST',
-        body: user,
-      }),
-      invalidatesTags: ['Users'],
+      queryFn: async (user) => {
+        return {
+          data: await createUser(user),
+        }
+      },
+      onQueryStarted: async (user, { dispatch, queryFulfilled }) => {
+        const patchResult = dispatch(
+          usersApiSlice.util.updateQueryData(
+            'fetchUsers',
+            undefined,
+            (draftUsers) => [...draftUsers, user]
+          )
+        )
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
     }),
-
     removeUser: builder.mutation<boolean, User>({
-      query: (user) => ({
-        url: `user/${user.id}`,
-        method: 'DELETE',
-      }),
-
-      invalidatesTags: ['Users'],
+      queryFn: async (user) => {
+        await deleteUser(user.id)
+        return {
+          data: true,
+        }
+      },
       onQueryStarted: async (user, { dispatch, queryFulfilled }) => {
         dispatch(setDeletingUserId(user.id))
-        await queryFulfilled
+        const patchResult = dispatch(
+          usersApiSlice.util.updateQueryData(
+            'fetchUsers',
+            undefined,
+            (draftUsers) => draftUsers.filter((_user) => _user.id !== user.id)
+          )
+        )
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
         dispatch(setDeletingUserId(null))
       },
     }),
