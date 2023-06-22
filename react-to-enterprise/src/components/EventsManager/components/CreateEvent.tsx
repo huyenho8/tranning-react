@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { useEventsStore } from '../eventsStore'
-import { Event, EventsQueryState } from '../eventsTypes'
-import { useMutation, useQueryClient } from 'react-query'
-import { createEvents } from '@/api/eventApi'
+import { useUpdateAtom } from 'jotai/utils'
+import { createEventAtom } from '../eventsAtoms'
+import { Event } from '../eventsTypes'
 
 type CreateEventProps = {}
 
@@ -22,47 +21,7 @@ const formatDate = (date: string) => {
 
 const CreateEvent = (props: CreateEventProps) => {
   const [form, setForm] = useState(initialState)
-  const queryClient = useQueryClient()
-  const {
-    mutate: initCreateEvent,
-    isLoading: createEventLoading,
-    isError: createEventError,
-  } = useMutation(['createEvent'], createEvents, {
-    onMutate: async (event) => {
-      await queryClient.cancelQueries(['events'])
-
-      const previousEvents = queryClient.getQueryData<EventsQueryState>([
-        'events',
-      ])
-
-      if (previousEvents) {
-        queryClient.setQueriesData(['events'], {
-          ...previousEvents,
-          allEvents: [event, ...previousEvents.allEvents],
-          upcomingEvents: [event, ...previousEvents.allEvents],
-        })
-      }
-
-      return {
-        previousEvents,
-      }
-    },
-
-    onError: (
-      err,
-      variables,
-      context?: {
-        previousEvents?: EventsQueryState
-      }
-    ) => {
-      if (context?.previousEvents) {
-        queryClient.setQueryData(['events'], context.previousEvents)
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries(['events'])
-    },
-  })
+  const createEvent = useUpdateAtom(createEventAtom)
 
   const onCreateEvent = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -75,7 +34,7 @@ const CreateEvent = (props: CreateEventProps) => {
     )
       return
 
-    initCreateEvent({
+    createEvent({
       ...form,
       id: createId(),
       startDate: formatDate(form.startDate),

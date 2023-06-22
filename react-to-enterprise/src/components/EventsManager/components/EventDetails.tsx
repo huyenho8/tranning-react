@@ -1,17 +1,10 @@
-import React from 'react'
-import { useEventsStore } from '../eventsStore'
-import { useQuery } from 'react-query'
-import { EventsQueryState } from '../eventsTypes'
+import { useAtom } from 'jotai'
+import { selectedEventAtom } from '../eventsAtoms'
 
 type EventDetailsProps = {}
 
 const EventDetails = (props: EventDetailsProps) => {
-  const { data } = useQuery<EventsQueryState>(['events'])
-
-  const event = useEventsStore((state) => {
-    if (!state.selectedEvent) return
-    return data?.allEvents.find((event) => event.id === state.selectedEvent)
-  })
+  const [event] = useAtom(selectedEventAtom)
 
   return (
     <div>
@@ -33,7 +26,7 @@ const EventDetails = (props: EventDetailsProps) => {
             </p>
             <span className="mb-1 font-semibold block">End</span>
             <p>
-              {event.endDate} at {event.endTime}
+              {event.endDate} at {event.endTime}{' '}
             </p>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import React from 'react'
 import clsx from 'clsx'
 
 export type EventTab = 'all' | 'upcoming' | 'past'
@@ -10,9 +9,9 @@ type EventsTabsProps = {
 
 const activeTabClass = '!border-blue-500 text-blue-500'
 const tabClass = 'px-2 pb-2 border-b border-transparent'
+
 const EventsTabs = (props: EventsTabsProps) => {
   const { activeTab, setActiveTab } = props
-
   return (
     <div className="border-b border-blue-100 flex gap-4">
       <button
@@ -36,4 +35,5 @@ const EventsTabs = (props: EventsTabsProps) => {
     </div>
   )
 }
+
 export default EventsTabs
