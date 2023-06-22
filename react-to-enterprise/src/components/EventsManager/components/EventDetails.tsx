@@ -1,12 +1,16 @@
 import React from 'react'
 import { useEventsStore } from '../eventsStore'
+import { useQuery } from 'react-query'
+import { EventsQueryState } from '../eventsTypes'
 
 type EventDetailsProps = {}
 
 const EventDetails = (props: EventDetailsProps) => {
+  const { data } = useQuery<EventsQueryState>(['events'])
+
   const event = useEventsStore((state) => {
     if (!state.selectedEvent) return
-    return state.events.find((event) => event.id === state.selectedEvent)
+    return data?.allEvents.find((event) => event.id === state.selectedEvent)
   })
 
   return (
