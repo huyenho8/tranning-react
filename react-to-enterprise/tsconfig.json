@@ -24,7 +24,8 @@
     "paths": {
       "@/*": ["src/*"],
       "test-utils": ["src/helpers/test-utils"]
-    }
+    },
+    "types": ["jest", "node"]
   },
   "include": [
     "src"
